@@ -1,7 +1,7 @@
 # Changelog
 
 Library versions of fractonica-core. Before 1.0 a minor version may change
-the API (README.md, "Versioning"); every change of a text or a layout is
+the API (docs/GUIDE.md, "Versioning"); every change of a text or a layout is
 listed here so that a client can follow it.
 
 ## 0.2.0

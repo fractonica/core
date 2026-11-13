@@ -827,7 +827,7 @@ uint8_t frc_span_parts(const frc_span_t *span, uint8_t max_parts, int keep_zeros
  * `max_parts` 0 means the default precision, 2.
  * (SPEC S15.4 words it "shorter than one Flavon ... led by the Blink"; the
  * reference keeps the decimal below 10 Blinks only, and so does this core:
- * 12.4 Blinks read "12ν". See the open issues in README.md.)
+ * 12.4 Blinks read "12ν". See "Known gaps" in docs/GUIDE.md.)
  * The decimal, rounded from the span with a half going up: from 1 Blink
  * one decimal ("2.6ν"; 9.96 reads "10ν"); below 1 two significant digits
  * ("0.14ν", "0.0013ν"; 0.997 reads "1ν").

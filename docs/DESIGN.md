@@ -372,7 +372,7 @@ mark is an instant, so a wrong guess cannot hide behind the bisection.
 The deepest call chain of the library goes through this search:
 `frc_span_next_change` → `same_text_at` → `frc_span_between` →
 `blink_point_at` → `frc_i_fraction_at` → … → `frc_i_div128`, about 900 bytes
-of stack on Xtensa (`-Os`; see README.md for the measured figure). Size a
+of stack on Xtensa (`-Os`; see GUIDE.md for the measured figure). Size a
 task's stack for that, not for the largest single frame.
 
 ## 9. The big-integer ladder

@@ -3,7 +3,7 @@
 #   1. ESP-IDF component. When ESP_PLATFORM is set (idf.py sets it) this file
 #      registers the sources as a component and stops. Put the repository in
 #      the project's components/ directory under the name the component should
-#      have, e.g. components/fractonica (see README.md, "ESP32").
+#      have, e.g. components/fractonica (see docs/GUIDE.md, "ESP32").
 #
 #   2. Ordinary CMake project. A static library `fractonica` with the alias
 #      `fractonica::core`, for add_subdirectory() / FetchContent or a

@@ -13,7 +13,7 @@
 //     .target(name: "App", dependencies: [.product(name: "CFractonica", package: "core")])
 //
 // The package identity is the directory (or repository) name, "core".
-// See README.md, "Apple platforms", for what Swift sees of the C API.
+// See docs/GUIDE.md, "Apple platforms", for what Swift sees of the C API.
 
 import PackageDescription
 

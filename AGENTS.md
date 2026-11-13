@@ -242,6 +242,9 @@ tools/check-cross.sh     `make check-cross`
 tools/check-progmem.sh   `make check-progmem`
 docs/SPEC.md             the specification this version implements (a copy; see section 9)
 docs/DESIGN.md           the arithmetic design and its bounds
+docs/GUIDE.md            the technical guide: guarantees, sizes, API map, build, integrations, known gaps
+docs/hero.jpg            the picture on the front page (a web-client screenshot)
+README.md                the GitHub front page; details live in docs/GUIDE.md
 Makefile                 reference build, tests and proofs
 CMakeLists.txt           ESP-IDF component + ordinary CMake library
 Package.swift            SwiftPM module CFractonica
@@ -554,7 +557,7 @@ Library version 0.2.0, SPEC version 2.2.0. A version bump touches:
 `FRC_VERSION*` and `FRC_SPEC_VERSION` in `include/fractonica.h` (`test_spec`
 checks both), `project(… VERSION …)` in `CMakeLists.txt`,
 `library.json`, `idf_component.yml` (CI checks that these agree), this file,
-the README, and `CHANGELOG.md`: every added function, every changed layout
-and every changed text (old → new), for the clients. `Package.swift` carries
+`docs/GUIDE.md`, the version line of `README.md`, and `CHANGELOG.md`:
+every added function, every changed layout and every changed text (old → new), for the clients. `Package.swift` carries
 no version. Before 1.0 a minor version may change the
 API; a patch version never changes a reading.
