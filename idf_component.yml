@@ -6,6 +6,7 @@
 # as components/fractonica (not components/core) and write
 # `REQUIRES fractonica` in the component that uses it. See docs/GUIDE.md, "ESP32".
 version: "0.2.0"
+license: "Apache-2.0"
 description: "The Fractonica clock core: an eclipse-anchored harmonic clock in dependency-free C99 (SPEC 2.2.0). Integer-only clock path, no heap, no libc, constant tables in flash."
 tags:
   - clock

@@ -395,4 +395,4 @@ idf_component.yml        ESP-IDF component manifest
 
 ## Licence
 
-Not chosen yet: all rights reserved until the owner picks one. See [LICENSE](../LICENSE).
+Apache License 2.0. See [LICENSE](../LICENSE).

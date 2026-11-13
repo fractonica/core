@@ -3,7 +3,16 @@
   "name": "fractonica-core",
   "version": "0.2.0",
   "description": "The Fractonica clock core: an eclipse-anchored harmonic clock in dependency-free C99. Exact integer arithmetic, no heap, no libc, constant tables in flash. Implements SPEC 2.2.0.",
-  "keywords": ["clock", "time", "eclipse", "saros", "calendar", "c99", "freestanding"],
+  "license": "Apache-2.0",
+  "keywords": [
+    "clock",
+    "time",
+    "eclipse",
+    "saros",
+    "calendar",
+    "c99",
+    "freestanding"
+  ],
   "frameworks": "*",
   "platforms": "*",
   "headers": "fractonica.h",
