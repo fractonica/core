@@ -1,0 +1,148 @@
+# Continuous integration for fractonica-core.
+#
+#   host        `make test` and every host check, on Linux (gcc and clang) and macOS
+#   cross       the LLVM checks (32-bit syntax, the freestanding wasm32 link, size)
+#               and `make check-cross` with the cross compilers installed below
+#   wasm32      the whole test suite as 32-bit WebAssembly under node
+#   packaging   CMake (configure, build, ctest), SwiftPM, and the version
+#               numbers of the manifests
+#
+# Every step is a Makefile target or a command from README.md, so a failure
+# here reproduces with the same command on a developer machine.
+#
+# Not run here: `make vectors`. The oracle generators need the frozen
+# JavaScript reference, which is a separate checkout (see AGENTS.md).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host:
+    name: host checks (${{ matrix.os }}, ${{ matrix.cc }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, cc: gcc }
+          - { os: ubuntu-latest, cc: clang }
+          - { os: macos-latest, cc: cc }
+    steps:
+      - uses: actions/checkout@v5
+      - name: Compiler
+        run: ${{ matrix.cc }} --version
+      # `make check` is these targets in one go; they are separate steps here
+      # so that the log says which claim broke. Each runs even if an earlier
+      # one failed.
+      - name: make test
+        run: make CC=${{ matrix.cc }} test
+      - name: make check-includes
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-includes
+      - name: make check-progmem
+        if: ${{ !cancelled() }}
+        run: make check-progmem
+      - name: make check-api
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-api
+      - name: make check-symbols
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-symbols
+      - name: make check-nofloat
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-nofloat
+      - name: make check-harvard
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-harvard
+      - name: make check-sanitize
+        if: ${{ !cancelled() }}
+        run: make CC=${{ matrix.cc }} check-sanitize
+
+  cross:
+    name: cross checks (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install LLVM and cross compilers (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang lld llvm \
+            gcc-arm-none-eabi libnewlib-arm-none-eabi gcc-avr avr-libc
+      - name: Install LLVM (macOS)
+        if: runner.os == 'macOS'
+        run: brew install llvm lld
+      - name: make check-32
+        run: make check-32
+      - name: make check-freestanding
+        if: ${{ !cancelled() }}
+        run: make check-freestanding
+      - name: make size
+        if: ${{ !cancelled() }}
+        run: make size
+      - name: make check-cross
+        if: ${{ !cancelled() }}
+        run: make check-cross
+
+  wasm32:
+    name: tests as wasm32
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mymindstorm/setup-emsdk@v14
+      - name: make test-wasm32
+        run: make test-wasm32
+
+  packaging:
+    name: packaging (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Versions agree
+        run: |
+          v=$(sed -n 's/^#define FRC_VERSION "\(.*\)"/\1/p' include/fractonica.h)
+          s=$(sed -n 's/^#define FRC_SPEC_VERSION "\(.*\)"/\1/p' include/fractonica.h)
+          echo "library $v, SPEC $s"
+          test -n "$v" && test -n "$s"
+          grep -q "^Version $s\." docs/SPEC.md
+          grep -q "\"version\": \"$v\"" library.json
+          grep -q "^version: \"$v\"" idf_component.yml
+          grep -q "^project(fractonica VERSION $v " CMakeLists.txt
+      - name: CMake configure
+        if: ${{ !cancelled() }}
+        run: cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release -DFRACTONICA_BUILD_TESTS=ON
+      - name: CMake build
+        if: ${{ !cancelled() }}
+        run: cmake --build build/cmake --parallel
+      - name: CTest
+        if: ${{ !cancelled() }}
+        run: ctest --test-dir build/cmake --output-on-failure
+      - name: CMake without the float API
+        if: ${{ !cancelled() }}
+        run: |
+          cmake -S . -B build/cmake-nofloat -DCMAKE_BUILD_TYPE=Release -DFRACTONICA_BUILD_TESTS=ON -DFRACTONICA_NO_FLOAT=ON
+          cmake --build build/cmake-nofloat --parallel
+          ctest --test-dir build/cmake-nofloat --output-on-failure
+      - name: SwiftPM
+        if: ${{ !cancelled() && runner.os == 'macOS' }}
+        run: swift build

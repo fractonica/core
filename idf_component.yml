@@ -1,0 +1,23 @@
+# ESP-IDF component manifest (IDF Component Manager).
+#
+# The component is the repository root: CMakeLists.txt registers src/*.c with
+# include/ as the public include directory when ESP_PLATFORM is set.
+# ESP-IDF names a component after its DIRECTORY, so check the repository out
+# as components/fractonica (not components/core) and write
+# `REQUIRES fractonica` in the component that uses it. See README.md, "ESP32".
+version: "0.2.0"
+description: "The Fractonica clock core: an eclipse-anchored harmonic clock in dependency-free C99 (SPEC 2.2.0). Integer-only clock path, no heap, no libc, constant tables in flash."
+tags:
+  - clock
+  - time
+  - eclipse
+  - saros
+dependencies:
+  idf: ">=4.4"
+files:
+  exclude:
+    - "build/**/*"
+    - ".build/**/*"
+    - ".github/**/*"
+    - "tests/**/*"
+    - "tools/**/*"
